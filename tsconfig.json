@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "target": "es2017", // Specify ECMAScript target version
+      "lib": ["es2017", "dom"], 
+      "module": "commonjs",     // Specify module code generation
+      "outDir": "./dist",       // Redirect output structure to the directory
+      "rootDir": "./",          // Specify the root directory of input files
+      "strict": true,           // Enable all strict type-checking options
+      "esModuleInterop": true    // Enables emit interoperability between CommonJS and ES Modules
+    },
+    "include": ["Gameplay", "server.ts"], // Specify the files to be included
+    "exclude": ["node_modules"]  // Exclude the node_modules directory
+  }
+  
