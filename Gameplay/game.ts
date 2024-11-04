@@ -37,13 +37,15 @@ class Game {
         let cardToHit = this.deck.pop();
         if (cardToHit) {
             console.log("This is the card that is abt to get dealt. ", cardToHit.toJson());
-            if (this.playerTurn) {
+            if (this.playerTurn && !this.player.hasStood) {
                 this.player.dealCard(cardToHit);
                 return this.player.getUserName();
-            } else {
+            } else if (!this.dealer.hasStood) {
                 this.dealer.dealCard(cardToHit);
                 return this.dealer.getUserName();
             }
+
+            return 'Nobody';
         } else {
             console.log("No cards left in the deck. Game over.");
             return '';
