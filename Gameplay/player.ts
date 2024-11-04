@@ -39,7 +39,7 @@ class Player {
         const potentialScore = this.score + card.getValue();
         if (potentialScore === 21) {
             this.hasBJ = true;
-            return
+            return;
         } else if (potentialScore > 21) {
             this.inGame = false;
             return;

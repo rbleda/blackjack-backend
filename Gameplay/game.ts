@@ -10,19 +10,12 @@ class Game {
 
     constructor(player: Player) {
         this.player = player;
-        this.dealer = new Player("dealer");
-        this.deck = [];
+        this.dealer = new Player("Dealer");
+        this.deck = generateShuffledDeck();
         this.playerTurn = true;
     }
 
     public initializeGame(): void {
-        if (this.deck.length != 0) {
-            this.player.reset();
-            this.dealer.reset();
-            this.deck = [];
-            this.playerTurn = true;
-        }
-        this.deck = generateShuffledDeck();
         let dealCount = 0;
         while (dealCount <= 3) {
             const cardToDeal = this.deck.pop();
@@ -60,9 +53,11 @@ class Game {
     public standPlayer(): string {
         if (this.playerTurn && !this.player.hasStood) {
             this.player.hasStood = true;
+            this.playerTurn = !this.playerTurn;
             return this.player.getUserName();
         } else if (!this.playerTurn && !this.dealer.hasStood){
             this.dealer.hasStood = true;
+            this.playerTurn = !this.playerTurn;
             return this.dealer.getUserName();
         }
 
