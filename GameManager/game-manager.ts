@@ -14,7 +14,9 @@ class GameManager {
         this.game.initializeGame();
 
         if (this.ws.OPEN) {
-            this.ws.send(JSON.stringify({ type: 'GAME_STATE', state: JSON.stringify(this.game.toJson()) }));
+            setTimeout(() => {
+                this.ws.send(JSON.stringify({ type: 'GAME_STATE', state: JSON.stringify(this.game.toJson()) }));
+            }, 1500);
         }
 
         this.ws.on("message", (message: string) => {
@@ -28,8 +30,21 @@ class GameManager {
                     method(payload);
                 }
 
-                // Return new game state to client
-                this.ws.send(JSON.stringify({ type: 'GAME_STATE', state: JSON.stringify(this.game.toJson()) }));
+                if (this.game.isGameOver()) {
+                    // Send final state message to client if game is over
+                    this.ws.send(JSON.stringify({ type: 'FINAL_STATE', state: JSON.stringify(this.game.toJson()) }));
+                    return;
+                }
+
+                if (this.game.isGameUpdate()) {
+                    // Make sure game has been updated to send data to client
+                    this.ws.send(JSON.stringify({ type: 'GAME_STATE', state: JSON.stringify(this.game.toJson()) }));
+                    this.game.setGameUpdate(false);
+                    return;
+                }
+
+                // // Return new game state to client
+                // this.ws.send(JSON.stringify({ type: 'GAME_STATE', state: JSON.stringify(this.game.toJson()) }));
             } else {
                 console.log('Unknown action received:', action);
             }

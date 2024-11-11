@@ -1,4 +1,5 @@
 import Card from "./card";
+import { DealResult } from "./DealResult";
 import { generateShuffledDeck } from "./game-play-utils";
 import Player from "./player";
 
@@ -7,12 +8,16 @@ class Game {
     private dealer: Player;
     private deck: Card[];
     private playerTurn: boolean;
+    private gameUpdate: boolean;
+    private gameOver: boolean;
 
     constructor(player: Player) {
         this.player = player;
         this.dealer = new Player("Dealer");
         this.deck = generateShuffledDeck();
         this.playerTurn = true;
+        this.gameUpdate = false;
+        this.gameOver = false;
     }
 
     public initializeGame(): void {
@@ -38,10 +43,18 @@ class Game {
         if (cardToHit) {
             console.log("This is the card that is abt to get dealt. ", cardToHit.toJson());
             if (this.playerTurn && !this.player.hasStood) {
-                this.player.dealCard(cardToHit);
+                const result = this.player.dealCard(cardToHit);
+                if (result === DealResult.BLACKJACK || result === DealResult.OUTSIDE) {
+                    this.gameOver = true;
+                }
+                this.setGameUpdate(true);
                 return this.player.getUserName();
-            } else if (!this.dealer.hasStood) {
-                this.dealer.dealCard(cardToHit);
+            } else if (!this.playerTurn && !this.dealer.hasStood) {
+                const result = this.dealer.dealCard(cardToHit);
+                if (result === DealResult.BLACKJACK || result === DealResult.OUTSIDE) {
+                    this.gameOver = true;
+                }
+                this.setGameUpdate(true);
                 return this.dealer.getUserName();
             }
 
@@ -56,14 +69,37 @@ class Game {
         if (this.playerTurn && !this.player.hasStood) {
             this.player.hasStood = true;
             this.playerTurn = !this.playerTurn;
+            this.playDealerRound();
             return this.player.getUserName();
-        } else if (!this.playerTurn && !this.dealer.hasStood){
-            this.dealer.hasStood = true;
-            this.playerTurn = !this.playerTurn;
-            return this.dealer.getUserName();
         }
 
         return '';
+    }
+
+    public isGameOver(): boolean {
+        return this.gameOver;
+    }
+
+    public isGameUpdate(): boolean {
+        return this.gameUpdate;
+    }
+
+    public setGameUpdate(val: boolean): void {
+        this.gameUpdate = val;
+    }
+
+    private playDealerRound() {
+        if (this.dealer.getScore() >= 16) {
+            this.gameOver = true;
+            return;
+        }
+
+        while (!this.gameOver) {
+            const dealerHit = this.hitPlayer();
+            console.log("Hitting the dealer again_", dealerHit);
+
+            this.playDealerRound();
+        }
     }
 
     toJson() {

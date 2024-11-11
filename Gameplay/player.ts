@@ -1,4 +1,5 @@
 import Card from "./card";
+import { DealResult } from "./DealResult";
 
 class Player {
     private userName: string;
@@ -35,19 +36,20 @@ class Player {
 
     // Deal a card to the player, if that player goes over 21
     // he is out of the game.
-    public dealCard(card: Card) {
+    public dealCard(card: Card): DealResult {
         const potentialScore = this.score + card.getValue();
-        if (potentialScore === 21) {
-            this.hasBJ = true;
-            return;
-        } else if (potentialScore > 21) {
-            this.inGame = false;
-            return;
-        }
-
         const updatedHand = [...this.hand, card];
         this.hand = updatedHand;
         this.setNewScore(updatedHand);
+        if (potentialScore === 21) {
+            this.hasBJ = true;
+            return DealResult.BLACKJACK;
+        } else if (potentialScore > 21) {
+            this.inGame = false;
+            return DealResult.OUTSIDE;
+        } else {
+            return DealResult.INSIDE;
+        }
     }
 
     // Set new score for player based on updated hand
