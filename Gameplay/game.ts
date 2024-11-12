@@ -1,6 +1,7 @@
 import Card from "./card";
 import { DealResult } from "./DealResult";
 import { generateShuffledDeck } from "./game-play-utils";
+import { GameState } from "./GameState";
 import Player from "./player";
 
 class Game {
@@ -8,19 +9,15 @@ class Game {
     private dealer: Player;
     private deck: Card[];
     private playerTurn: boolean;
-    private gameUpdate: boolean;
-    private gameOver: boolean;
 
     constructor(player: Player) {
         this.player = player;
         this.dealer = new Player("Dealer");
         this.deck = generateShuffledDeck();
         this.playerTurn = true;
-        this.gameUpdate = false;
-        this.gameOver = false;
     }
 
-    public initializeGame(): void {
+    public initializeGame(): GameState {
         let dealCount = 0;
         while (dealCount <= 3) {
             const cardToDeal = this.deck.pop();
@@ -36,70 +33,59 @@ class Game {
 
             dealCount++;
         }
-    }
 
-    public hitPlayer(): string {
-        let cardToHit = this.deck.pop();
-        if (cardToHit) {
-            console.log("This is the card that is abt to get dealt. ", cardToHit.toJson());
-            if (this.playerTurn && !this.player.hasStood) {
-                const result = this.player.dealCard(cardToHit);
-                if (result === DealResult.BLACKJACK || result === DealResult.OUTSIDE) {
-                    this.gameOver = true;
-                }
-                this.setGameUpdate(true);
-                return this.player.getUserName();
-            } else if (!this.playerTurn && !this.dealer.hasStood) {
-                const result = this.dealer.dealCard(cardToHit);
-                if (result === DealResult.BLACKJACK || result === DealResult.OUTSIDE) {
-                    this.gameOver = true;
-                }
-                this.setGameUpdate(true);
-                return this.dealer.getUserName();
-            }
-
-            return 'Nobody';
+        if (this.player.hasBJ) {
+            return GameState.FINAL;
         } else {
-            console.log("No cards left in the deck. Game over.");
-            return '';
+            return GameState.NORMAL;
         }
     }
 
-    public standPlayer(): string {
+    public async hitPlayer(): Promise<GameState> {
+        let cardToHit = this.deck.pop();
+        if (cardToHit) {
+            console.log("This is the card that is abt to get dealt: ", cardToHit.toJson());
+            if (this.playerTurn && !this.player.hasStood) {
+                const result = await this.player.dealCard(cardToHit);
+                if (result === DealResult.BLACKJACK || result === DealResult.OUTSIDE) {
+                    return GameState.FINAL;
+                }
+                return GameState.NORMAL;
+            } else if (!this.playerTurn && !this.dealer.hasStood) {
+                const result = await this.dealer.dealCard(cardToHit);
+                if (result === DealResult.BLACKJACK || result === DealResult.OUTSIDE) {
+                    return GameState.FINAL;
+                }
+                return GameState.NORMAL;
+            }
+
+            return GameState.NORMAL;
+        } else {
+            console.log("No cards left in the deck. Game over.");
+            return GameState.FINAL;
+        }
+    }
+
+    public async standPlayer(): Promise<GameState> {
         if (this.playerTurn && !this.player.hasStood) {
             this.player.hasStood = true;
             this.playerTurn = !this.playerTurn;
-            this.playDealerRound();
-            return this.player.getUserName();
+            return await this.playDealerRound();
         }
 
-        return '';
+        return GameState.NORMAL;
     }
 
-    public isGameOver(): boolean {
-        return this.gameOver;
-    }
-
-    public isGameUpdate(): boolean {
-        return this.gameUpdate;
-    }
-
-    public setGameUpdate(val: boolean): void {
-        this.gameUpdate = val;
-    }
-
-    private playDealerRound() {
+    private async playDealerRound(): Promise<GameState> {
         if (this.dealer.getScore() >= 16) {
-            this.gameOver = true;
-            return;
+            return GameState.FINAL;
         }
 
-        while (!this.gameOver) {
-            const dealerHit = this.hitPlayer();
-            console.log("Hitting the dealer again_", dealerHit);
-
-            this.playDealerRound();
+        if (await this.hitPlayer() === GameState.NORMAL) {
+            return this.playDealerRound();
         }
+
+        return GameState.FINAL;
     }
 
     toJson() {

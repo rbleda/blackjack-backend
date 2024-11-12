@@ -36,7 +36,7 @@ class Player {
 
     // Deal a card to the player, if that player goes over 21
     // he is out of the game.
-    public dealCard(card: Card): DealResult {
+    public async dealCard(card: Card): Promise<DealResult> {
         const potentialScore = this.score + card.getValue();
         const updatedHand = [...this.hand, card];
         this.hand = updatedHand;
