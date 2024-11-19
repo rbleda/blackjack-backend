@@ -35,7 +35,7 @@ class Game {
         }
 
         if (this.player.hasBJ) {
-            return GameState.FINAL;
+            return GameState.PLAYER_BJ;
         } else {
             return GameState.NORMAL;
         }
@@ -47,16 +47,22 @@ class Game {
             console.log("This is the card that is abt to get dealt: ", cardToHit.toJson());
             if (this.playerTurn && !this.player.hasStood) {
                 const result = await this.player.dealCard(cardToHit);
-                if (result === DealResult.BLACKJACK || result === DealResult.OUTSIDE) {
-                    return GameState.FINAL;
+                if (result === DealResult.BLACKJACK) {
+                    return GameState.PLAYER_BJ;
+                } else if (result === DealResult.OUTSIDE) {
+                    return GameState.PLAYER_BUST;
+                } else {
+                    return GameState.NORMAL;
                 }
-                return GameState.NORMAL;
             } else if (!this.playerTurn && !this.dealer.hasStood) {
                 const result = await this.dealer.dealCard(cardToHit);
-                if (result === DealResult.BLACKJACK || result === DealResult.OUTSIDE) {
-                    return GameState.FINAL;
+                if (result === DealResult.BLACKJACK) {
+                    return GameState.DEALER_BJ;
+                } else if (result === DealResult.OUTSIDE) {
+                    return GameState.DEALER_BUST;
+                } else {
+                    return GameState.NORMAL;
                 }
-                return GameState.NORMAL;
             }
 
             return GameState.NORMAL;
