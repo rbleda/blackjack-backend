@@ -83,15 +83,16 @@ class Game {
     }
 
     private async playDealerRound(): Promise<GameState> {
-        if (this.dealer.getScore() >= 16) {
+        if (this.dealer.getScore() >= 16 && this.dealer.getScore() <= 20) {
             return GameState.FINAL;
+        } else if (this.dealer.getScore() === 21) {
+            return GameState.DEALER_BJ;
+        } else if (this.dealer.getScore() > 21) {
+            return GameState.DEALER_BUST;
         }
 
-        if (await this.hitPlayer() === GameState.NORMAL) {
-            return this.playDealerRound();
-        }
-
-        return GameState.FINAL;
+        const hitDealerResult = await this.hitPlayer();
+        return this.playDealerRound();
     }
 
     toJson() {
