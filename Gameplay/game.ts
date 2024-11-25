@@ -5,16 +5,13 @@ import { GameState } from "./GameState";
 import Player from "./player";
 
 class Game {
-    private player: Player;
-    private dealer: Player;
-    private deck: Card[];
-    private playerTurn: boolean;
+    private player!: Player;
+    private dealer!: Player;
+    private deck!: Card[];
+    private playerTurn!: boolean;
 
     constructor(player: Player) {
-        this.player = player;
-        this.dealer = new Player("Dealer");
-        this.deck = generateShuffledDeck();
-        this.playerTurn = true;
+        this.setNewGameVars(player);
     }
 
     public initializeGame(): GameState {
@@ -82,6 +79,11 @@ class Game {
         return GameState.NORMAL;
     }
 
+    public async restartGame(): Promise<GameState> {
+        this.setNewGameVars(new Player(this.player.getUserName()));
+        return this.initializeGame();
+    }
+
     private async playDealerRound(): Promise<GameState> {
         if (this.dealer.getScore() >= 16 && this.dealer.getScore() <= 20) {
             return GameState.FINAL;
@@ -93,6 +95,13 @@ class Game {
 
         const hitDealerResult = await this.hitPlayer();
         return this.playDealerRound();
+    }
+
+    private setNewGameVars(player: Player): void {
+        this.player = player;
+        this.dealer = new Player("Dealer");
+        this.deck = generateShuffledDeck();
+        this.playerTurn = true;
     }
 
     toJson() {

@@ -58,6 +58,11 @@ class GameManager {
             return this.game.standPlayer();
         });
 
+        actions.set('RESTART_GAME', () => {
+            console.log("Restarting game...");
+            return this.game.restartGame();
+        });
+
         return actions;
     }
 }
