@@ -12,13 +12,13 @@ class GameManager {
         this.game = game;
 
         this.actions = this.addGameActions();
-        let initialGameState = this.game.initializeGame();
+        // let initialGameState = this.game.initializeGame();
 
-        if (this.ws.OPEN) {
-            setTimeout(() => {
-                this.ws.send(JSON.stringify({ type: initialGameState, state: JSON.stringify(this.game.toJson()) }));
-            }, 1500);
-        }
+        // if (this.ws.OPEN) {
+        //     setTimeout(() => {
+        //         this.ws.send(JSON.stringify({ type: initialGameState, state: JSON.stringify(this.game.toJson()) }));
+        //     }, 1500);
+        // }
 
         this.ws.on("message", async (message: string) => {
             const { action, payload } = JSON.parse(message);
@@ -61,6 +61,17 @@ class GameManager {
         actions.set('RESTART_GAME', () => {
             console.log("Restarting game...");
             return this.game.restartGame();
+        });
+
+        actions.set('START_GAME', async (payload: any) => {
+            console.log("Starting new game for", payload.userName);
+            this.game.setPlayerUserName(payload?.userName);
+
+            // Adding a timeout here because want to make sure the user name is set
+            // Also because it looks cool when it is loading on the frontend screen
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+            return this.game.initializeGame();
         });
 
         return actions;

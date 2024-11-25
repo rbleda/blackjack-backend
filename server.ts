@@ -16,7 +16,7 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', (ws: WebSocket) => {
     console.log('New client connected!');
     console.log('Starting game:::>');
-    const game = new Game(new Player("Rai Bleda"));
+    const game = new Game(new Player(""));
     const gameManager = new GameManager(ws, game);
 });
 

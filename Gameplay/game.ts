@@ -14,7 +14,7 @@ class Game {
         this.setNewGameVars(player);
     }
 
-    public initializeGame(): GameState {
+    public async initializeGame(): Promise<GameState> {
         let dealCount = 0;
         while (dealCount <= 3) {
             const cardToDeal = this.deck.pop();
@@ -82,6 +82,10 @@ class Game {
     public async restartGame(): Promise<GameState> {
         this.setNewGameVars(new Player(this.player.getUserName()));
         return this.initializeGame();
+    }
+
+    public setPlayerUserName(username: string) {
+        this.player.setUserName(username);
     }
 
     private async playDealerRound(): Promise<GameState> {

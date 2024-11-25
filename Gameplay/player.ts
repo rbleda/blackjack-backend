@@ -27,6 +27,10 @@ class Player {
         return this.userName;
     }
 
+    public setUserName(username: string): void {
+        this.userName = username;
+    }
+
     public reset(): void {
         this.hand = [];
         this.score = 0;
