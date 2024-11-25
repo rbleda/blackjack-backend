@@ -22,6 +22,10 @@ class Card {
         return this.numValue;
     }
 
+    public setValue(newVal: number): void {
+        this.numValue = newVal;
+    }
+
     toJson() {
         return {
             value: this.strValue,

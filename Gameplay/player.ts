@@ -1,5 +1,6 @@
 import Card from "./card";
 import { DealResult } from "./DealResult";
+import { getHandScore } from "./game-play-utils";
 
 class Player {
     private userName: string;
@@ -37,8 +38,23 @@ class Player {
     // Deal a card to the player, if that player goes over 21
     // he is out of the game.
     public async dealCard(card: Card): Promise<DealResult> {
-        const potentialScore = this.score + card.getValue();
-        const updatedHand = [...this.hand, card];
+        let potentialScore = this.score + card.getValue();
+        let updatedHand = [...this.hand, card];
+        const aces = updatedHand.filter(card => card.strValue === "A");
+        if (aces.length > 0 && potentialScore > 21 ) {
+            updatedHand.forEach(card => {
+                if (getHandScore(updatedHand) <= 21) {
+                    return;
+                }
+
+                if (card.strValue === "A") {
+                    card.setValue(1);
+                }
+            });
+
+            potentialScore = getHandScore(updatedHand);
+        }
+
         this.hand = updatedHand;
         this.setNewScore(updatedHand);
         if (potentialScore === 21) {

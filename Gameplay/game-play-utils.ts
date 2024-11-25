@@ -27,7 +27,7 @@ const shuffleCards = (array: Card[]): Card[] => {
     return shuffledArray;
 }
 
-export const getCards = () : Map<string, number> => {
+export const getCards = (): Map<string, number> => {
     const cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
     const cardValues = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
     const theCards = new Map();
@@ -36,4 +36,13 @@ export const getCards = () : Map<string, number> => {
     }
 
     return theCards;
+}
+
+export const getHandScore = (hand: Card[]): number => {
+    let score = 0;
+    hand.forEach(card => {
+        score += card.getValue();
+    });
+
+    return score;
 }
