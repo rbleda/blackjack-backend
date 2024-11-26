@@ -9,6 +9,8 @@ class Game {
     private dealer!: Player;
     private deck!: Card[];
     private playerTurn!: boolean;
+    private playerBank!: number;
+    private playerBet!: number;
 
     constructor(player: Player) {
         this.setNewGameVars(player);
@@ -106,13 +108,17 @@ class Game {
         this.dealer = new Player("Dealer");
         this.deck = generateShuffledDeck();
         this.playerTurn = true;
+        this.playerBank = 100;
+        this.playerBet = 0;
     }
 
     toJson() {
         return {
             player: this.player.toJson(),
             dealer: this.dealer.toJson(),
-            playerTurn: this.playerTurn
+            playerTurn: this.playerTurn,
+            playerBank: this.playerBank,
+            playerBet: this.playerBet,
         }
     }
 }
