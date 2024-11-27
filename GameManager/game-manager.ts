@@ -58,12 +58,12 @@ class GameManager {
             return this.game.standPlayer();
         });
 
-        actions.set('RESTART_GAME', () => {
-            console.log("Restarting game...");
-            return this.game.restartGame();
+        actions.set('NEW_ROUND', () => {
+            console.log("Starting new round");
+            return this.game.startNewRound();
         });
 
-        actions.set('START_GAME', async (payload: any) => {
+        actions.set('INIT_GAME', async (payload: any) => {
             console.log("Starting new game for", payload.userName);
             this.game.setPlayerUserName(payload?.userName);
 
@@ -71,7 +71,12 @@ class GameManager {
             // Also because it looks cool when it is loading on the frontend screen
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            return this.game.initializeGame();
+            return GameState.INITIAL;
+        });
+
+        actions.set('PLACE_BET', (payload: any) => {
+            console.log("Placing a bet for player of: " + payload.amount);
+            return this.game.placePlayerBet(payload.amount);
         });
 
         return actions;

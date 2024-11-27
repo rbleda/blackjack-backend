@@ -13,7 +13,12 @@ class Game {
     private playerBet!: number;
 
     constructor(player: Player) {
-        this.setNewGameVars(player);
+        this.player = player;
+        this.dealer = new Player("Dealer");
+        this.deck = generateShuffledDeck();
+        this.playerTurn = true;
+        this.playerBank = 100;
+        this.playerBet = 0;
     }
 
     public async initializeGame(): Promise<GameState> {
@@ -81,13 +86,23 @@ class Game {
         return GameState.NORMAL;
     }
 
-    public async restartGame(): Promise<GameState> {
-        this.setNewGameVars(new Player(this.player.getUserName()));
+    public async startNewRound(): Promise<GameState> {
+        this.setNewRoundVars();
         return this.initializeGame();
     }
 
     public setPlayerUserName(username: string) {
         this.player.setUserName(username);
+    }
+
+    public async placePlayerBet(betAmount: number): Promise<GameState> {
+        if (this.playerBank - betAmount >= 0) {
+            this.playerBank = this.playerBank - betAmount;
+            this.playerBet = this.playerBet + betAmount;
+            return GameState.NORMAL;
+        }
+
+        return GameState.FINAL;
     }
 
     private async playDealerRound(): Promise<GameState> {
@@ -103,13 +118,11 @@ class Game {
         return this.playDealerRound();
     }
 
-    private setNewGameVars(player: Player): void {
-        this.player = player;
-        this.dealer = new Player("Dealer");
+    private setNewRoundVars(): void {
+        this.player.reset();
+        this.dealer.reset();
         this.deck = generateShuffledDeck();
         this.playerTurn = true;
-        this.playerBank = 100;
-        this.playerBet = 0;
     }
 
     toJson() {

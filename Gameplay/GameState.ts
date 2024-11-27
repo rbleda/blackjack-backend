@@ -1,6 +1,7 @@
 export enum GameState {
     FINAL = "FINAL_STATE",
     NORMAL = "GAME_STATE",
+    INITIAL = "INITIAL",
     PLAYER_BJ = "PLAYER_BJ",
     DEALER_BJ = "DEALER_BJ",
     PLAYER_BUST = "PLAYER_BUST",
