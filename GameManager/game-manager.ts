@@ -71,7 +71,7 @@ class GameManager {
             // Also because it looks cool when it is loading on the frontend screen
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            return GameState.NORMAL;
+            return GameState.INITIAL;
         });
 
         actions.set('PLACE_BET', (payload: any) => {

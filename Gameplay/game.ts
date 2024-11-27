@@ -96,7 +96,7 @@ class Game {
 
     public async startNewRound(): Promise<GameState> {
         this.setNewRoundVars();
-        return GameState.NORMAL;
+        return GameState.INITIAL;
     }
 
     public setPlayerUserName(username: string) {
