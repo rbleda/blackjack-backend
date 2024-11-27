@@ -71,12 +71,17 @@ class GameManager {
             // Also because it looks cool when it is loading on the frontend screen
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            return GameState.INITIAL;
+            return GameState.NORMAL;
         });
 
         actions.set('PLACE_BET', (payload: any) => {
             console.log("Placing a bet for player of: " + payload.amount);
             return this.game.placePlayerBet(payload.amount);
+        });
+
+        actions.set('DEAL_ROUND', () => {
+            console.log("Dealing a new round for players.");
+            return this.game.initializeGame();
         });
 
         return actions;

@@ -11,6 +11,7 @@ class Game {
     private playerTurn!: boolean;
     private playerBank!: number;
     private playerBet!: number;
+    private canDoubleDown!: boolean;
 
     constructor(player: Player) {
         this.player = player;
@@ -19,6 +20,7 @@ class Game {
         this.playerTurn = true;
         this.playerBank = 100;
         this.playerBet = 0;
+        this.canDoubleDown = false;
     }
 
     public async initializeGame(): Promise<GameState> {
@@ -38,6 +40,10 @@ class Game {
             dealCount++;
         }
 
+        if (this.playerTurn && this.playerBet > 0) {
+            this.canDoubleDown = true;
+        }
+
         if (this.player.hasBJ) {
             return GameState.PLAYER_BJ;
         } else {
@@ -51,6 +57,7 @@ class Game {
             console.log("This is the card that is abt to get dealt: ", cardToHit.toJson());
             if (this.playerTurn && !this.player.hasStood) {
                 const result = await this.player.dealCard(cardToHit);
+                this.canDoubleDown = false;
                 if (result === DealResult.BLACKJACK) {
                     return GameState.PLAYER_BJ;
                 } else if (result === DealResult.OUTSIDE) {
@@ -80,6 +87,7 @@ class Game {
         if (this.playerTurn && !this.player.hasStood) {
             this.player.hasStood = true;
             this.playerTurn = !this.playerTurn;
+            this.canDoubleDown = false;
             return await this.playDealerRound();
         }
 
@@ -88,7 +96,7 @@ class Game {
 
     public async startNewRound(): Promise<GameState> {
         this.setNewRoundVars();
-        return this.initializeGame();
+        return GameState.NORMAL;
     }
 
     public setPlayerUserName(username: string) {
@@ -97,11 +105,12 @@ class Game {
 
     public async placePlayerBet(betAmount: number): Promise<GameState> {
         if (this.playerBank - betAmount >= 0) {
-            this.playerBank = this.playerBank - betAmount;
-            this.playerBet = this.playerBet + betAmount;
+            this.playerBank =  this.playerBank - betAmount;
+            this.playerBet = betAmount;
             return GameState.NORMAL;
         }
 
+        // Fix this to maybe do out of money or something I don't know
         return GameState.FINAL;
     }
 
@@ -123,6 +132,8 @@ class Game {
         this.dealer.reset();
         this.deck = generateShuffledDeck();
         this.playerTurn = true;
+        this.playerBet = 0;
+        this.canDoubleDown = false;
     }
 
     toJson() {
@@ -132,6 +143,7 @@ class Game {
             playerTurn: this.playerTurn,
             playerBank: this.playerBank,
             playerBet: this.playerBet,
+            canDoubleDown: this.canDoubleDown
         }
     }
 }
