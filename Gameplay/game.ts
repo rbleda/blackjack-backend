@@ -110,9 +110,28 @@ class Game {
             return GameState.NORMAL;
         }
 
-        // Fix this to maybe do out of money or something I don't know
+        // Fix this to maybe do 'out of money' or something I don't know
         return GameState.FINAL;
     }
+
+    public async playerDoubleDown(): Promise<GameState> {
+        const doubleDownBet = this.playerBet;
+        if (this.playerBank - doubleDownBet < 0) {
+            this.canDoubleDown = false;
+            return GameState.NORMAL;
+        }
+
+        // Full double down process:
+        // 1. Player makes a bet which is double their original bet
+        // 2. Player is given one more card and that is all they get
+        // 3. Dealer then plays and afetr a winner is determined
+        await this.placePlayerBet(doubleDownBet);
+        const hitPlayerResult = await this.hitPlayer();
+        if (hitPlayerResult !== GameState.NORMAL) {
+            return hitPlayerResult;
+        }
+        return await this.standPlayer();
+    };
 
     private async playDealerRound(): Promise<GameState> {
         if (this.dealer.getScore() >= 17 && this.dealer.getScore() <= 20) {

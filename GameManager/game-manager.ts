@@ -84,6 +84,11 @@ class GameManager {
             return this.game.initializeGame();
         });
 
+        actions.set('DOUBLE_DOWN', () => {
+            console.log("Player is doubling down");
+            return this.game.playerDoubleDown();
+        })
+
         return actions;
     }
 }
