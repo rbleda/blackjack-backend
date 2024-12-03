@@ -87,7 +87,22 @@ class GameManager {
         actions.set('DOUBLE_DOWN', () => {
             console.log("Player is doubling down");
             return this.game.playerDoubleDown();
-        })
+        });
+
+        actions.set('PAY_PLAYER_POT', () => {
+            console.log("Paying the player, as they won the round.");
+            return this.game.payPlayer();
+        });
+
+        actions.set('REMOVE_POT', () => {
+            console.log("Player loses round, so they lose their bet.");
+            return this.game.deletePotValue();
+        });
+
+        actions.set('RETURN_PLAYER_BET', () => {
+            console.log("Player and dealer have tied. Return bet to player.");
+            return this.game.returnPlayerBet();
+        });
 
         return actions;
     }

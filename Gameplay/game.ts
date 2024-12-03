@@ -133,6 +133,22 @@ class Game {
         return await this.standPlayer();
     };
 
+    public async payPlayer(): Promise<GameState> {
+        const playerProfit = this.playerBet * 2;
+        this.playerBank = this.playerBank + playerProfit;
+        return GameState.NORMAL;
+    }
+
+    public async deletePotValue(): Promise<GameState> {
+        this.playerBet = 0;
+        return GameState.NORMAL;
+    }
+
+    public async returnPlayerBet(): Promise<GameState> {
+        this.playerBank = this.playerBank + this.playerBet;
+        return GameState.NORMAL;
+    }
+
     private async playDealerRound(): Promise<GameState> {
         if (this.dealer.getScore() >= 17 && this.dealer.getScore() <= 20) {
             return GameState.FINAL;
