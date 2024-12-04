@@ -41,7 +41,7 @@ class Game {
         }
 
         if (this.playerTurn && this.playerBet > 0) {
-            this.canDoubleDown = true;
+            this.canDoubleDown = this.playerBank - this.playerBet >= 0;
         }
 
         if (this.player.hasBJ) {
@@ -106,7 +106,7 @@ class Game {
     public async placePlayerBet(betAmount: number): Promise<GameState> {
         if (this.playerBank - betAmount >= 0) {
             this.playerBank =  this.playerBank - betAmount;
-            this.playerBet = betAmount;
+            this.playerBet = this.playerBet + betAmount;
             return GameState.NORMAL;
         }
 
