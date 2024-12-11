@@ -6,6 +6,7 @@ class Card {
     public strValue: string;
     public suit: SUIT;
     public color: CardColor;
+    public upsideDown: boolean;
 
     constructor(numValue: number, strValue: string, suit: SUIT) {
         this.numValue = numValue;
@@ -16,6 +17,7 @@ class Card {
         } else {
             this.color = CardColor.RED;
         }
+        this.upsideDown = false;
     }
 
     public getValue(): number {
@@ -26,11 +28,16 @@ class Card {
         this.numValue = newVal;
     }
 
+    public flipCard(): void {
+        this.upsideDown = !this.upsideDown;
+    }
+
     toJson() {
         return {
             value: this.strValue,
             suit: JSON.stringify(this.suit),
-            color: JSON.stringify(this.color)
+            color: JSON.stringify(this.color),
+            upsideDown: JSON.stringify(this.upsideDown)
         }
     }
 }

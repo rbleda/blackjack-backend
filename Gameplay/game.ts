@@ -32,6 +32,9 @@ class Game {
                     this.player.dealCard(cardToDeal);
                     this.playerTurn = false;
                 } else {
+                    if (dealCount === 3) {
+                        cardToDeal.flipCard();
+                    }
                     this.dealer.dealCard(cardToDeal);
                     this.playerTurn = true;
                 }
