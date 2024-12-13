@@ -61,18 +61,14 @@ class Game {
             if (this.playerTurn && !this.player.hasStood) {
                 const result = await this.player.dealCard(cardToHit);
                 this.canDoubleDown = false;
-                if (result === DealResult.BLACKJACK) {
-                    return GameState.PLAYER_BJ;
-                } else if (result === DealResult.OUTSIDE) {
+                if (result === DealResult.OUTSIDE) {
                     return GameState.PLAYER_BUST;
                 } else {
                     return GameState.NORMAL;
                 }
             } else if (!this.playerTurn && !this.dealer.hasStood) {
                 const result = await this.dealer.dealCard(cardToHit);
-                if (result === DealResult.BLACKJACK) {
-                    return GameState.DEALER_BJ;
-                } else if (result === DealResult.OUTSIDE) {
+                if (result === DealResult.OUTSIDE) {
                     return GameState.DEALER_BUST;
                 } else {
                     return GameState.NORMAL;

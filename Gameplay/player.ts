@@ -63,7 +63,7 @@ class Player {
         this.setNewScore(updatedHand);
         if (potentialScore === 21) {
             this.hasBJ = true;
-            return DealResult.BLACKJACK;
+            return DealResult.INSIDE;
         } else if (potentialScore > 21) {
             this.inGame = false;
             return DealResult.OUTSIDE;
